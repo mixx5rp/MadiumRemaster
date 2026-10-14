@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediumRemaster - Next-Gen Roblox Executor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0b10',
+                            800: '#12131c',
+                            700: '#1a1c29',
+                            600: '#26293b'
+                        },
+                        neon: {
+                            purple: '#a855f7',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b10;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .glow-purple {
+            box-shadow: 0 0 40px -10px rgba(168, 85, 247, 0.4);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.4);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #c084fc 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+        .glass-panel {
+            background: rgba(18, 19, 28, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+    </style>
+</head>
+<body class="bg-dark-950 text-gray-100 antialiased selection:bg-neon-purple selection:text-white">
+
+    <!-- Background grid decoration -->
+    <div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-neon-purple/10 to-neon-cyan/10 blur-[140px] rounded-full pointer-events-none z-0"></div>
+
+    <!-- Notification Toast (Custom alert alternative) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-32 opacity-0 transition-all duration-300 glass-panel px-6 py-4 rounded-xl border border-neon-cyan/30 flex items-center space-x-3 shadow-2xl">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-neon-cyan text-xl"></i>
+        <div>
+            <h4 id="toast-title" class="font-bold text-sm text-white">Notification</h4>
+            <p id="toast-msg" class="text-xs text-gray-400">Message goes here...</p>
+        </div>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center shadow-lg shadow-neon-purple/30">
+                    <i class="fa-solid fa-bolt text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-wider text-white">MEDIUM<span class="text-gradient">REMASTER</span></span>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-neon-cyan transition-colors">Features</a>
+                <a href="#scripthub" class="hover:text-neon-cyan transition-colors">Script Hub</a>
+                <a href="#installation" class="hover:text-neon-cyan transition-colors">Installation</a>
+                <a href="#faq" class="hover:text-neon-cyan transition-colors">FAQ</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-dark-700/80 border border-green-500/30 text-xs font-medium text-green-400">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span>Status: Undetected</span>
+                </div>
+                <a href="#download" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-semibold text-sm shadow-lg shadow-neon-purple/20 hover:shadow-neon-cyan/40 transition-all duration-300 transform hover:-translate-y-0.5">
+                    Download Now
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative z-10 pt-24 pb-20 md:pt-32 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+        <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass-panel border border-neon-purple/30 mb-8 text-xs font-semibold text-neon-purple uppercase tracking-widest animate-pulse">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>V3.8.2 Stable Release Available</span>
+        </div>
+        
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+            The Ultimate <span class="text-gradient">Roblox Executor</span> Experience
+        </h1>
+        
+        <p class="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-400 mb-10">
+            MediumRemaster delivers lightning-fast execution speeds, 100% UNC compliance, advanced script hub integration, and an unbreakable bypass core designed for maximum performance.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-5">
+            <a href="#download" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-bold text-base shadow-xl glow-purple hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3">
+                <i class="fa-solid fa-download text-lg"></i>
+                <span>Download v3.8.2</span>
+            </a>
+            <a href="#scripthub" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-white font-bold text-base hover:bg-dark-700/50 border border-white/10 transition-all duration-300 flex items-center justify-center space-x-3">
+                <i class="fa-solid fa-code text-neon-cyan"></i>
+                <span>Explore Script Hub</span>
+            </a>
+        </div>
+
+        <!-- Live Status Bar Widget -->
+        <div class="mt-16 max-w-2xl mx-auto grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="glass-panel p-4 rounded-2xl border border-white/5 text-left">
+                <div class="text-xs text-gray-400 font-medium mb-1">Execution Core</div>
+                <div class="text-lg font-bold text-white flex items-center space-x-2">
+                    <span class="text-neon-cyan">Hyperion Bypass</span>
+                </div>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border border-white/5 text-left">
+                <div class="text-xs text-gray-400 font-medium mb-1">UNC Score</div>
+                <div class="text-lg font-bold text-white flex items-center space-x-2">
+                    <span class="text-green-400">100%</span>
+                    <span class="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-300">Optimal</span>
+                </div>
+            </div>
+            <div class="glass-panel p-4 rounded-2xl border border-white/5 text-left col-span-2 sm:col-span-1">
+                <div class="text-xs text-gray-400 font-medium mb-1">Active Users</div>
+                <div class="text-lg font-bold text-white flex items-center space-x-2">
+                    <span class="text-neon-purple">48,291</span>
+                    <i class="fa-solid fa-users text-xs text-neon-purple"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Engineered For <span class="text-gradient">Excellence</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto">Built from the ground up to offer uncompromised power, reliability, and security while gaming.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-purple/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-purple/10 flex items-center justify-center text-neon-purple mb-6 group-hover:bg-neon-purple group-hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-bolt text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Lightning Fast Execution</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Optimized memory management ensures complex scripts compile and execute instantly without frame rate drops or game crashes.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-cyan/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-cyan/10 flex items-center justify-center text-neon-cyan mb-6 group-hover:bg-neon-cyan group-hover:text-dark-900 transition-all duration-300">
+                    <i class="fa-solid fa-shield-cat text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Advanced Anti-Cheat Bypass</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Continuous updates to our proprietary signature masking keep MediumRemaster completely undetected across all major game updates.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-purple/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-purple/10 flex items-center justify-center text-neon-purple mb-6 group-hover:bg-neon-purple group-hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-puzzle-piece text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Built-In Script Hub</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Access hundreds of pre-tested, verified scripts for popular games like Blox Fruits, Arsenal, Da Hood, and Pet Simulator with 1-click execution.
+                </p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-cyan/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-cyan/10 flex items-center justify-center text-neon-cyan mb-6 group-hover:bg-neon-cyan group-hover:text-dark-900 transition-all duration-300">
+                    <i class="fa-solid fa-check-double text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Full UNC & Luau Support</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Full Unified Naming Convention support guarantees that virtually any modern script you find online will run flawlessly.
+                </p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-purple/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-purple/10 flex items-center justify-center text-neon-purple mb-6 group-hover:bg-neon-purple group-hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-palette text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Modern Sleek Interface</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    An intuitive, customizable UI with tab support, auto-attach, script auto-saving, and syntax highlighting built right in.
+                </p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 hover:border-neon-cyan/50 transition-all duration-300 group">
+                <div class="w-14 h-14 rounded-2xl bg-neon-cyan/10 flex items-center justify-center text-neon-cyan mb-6 group-hover:bg-neon-cyan group-hover:text-dark-900 transition-all duration-300">
+                    <i class="fa-solid fa-headset text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">24/7 Dedicated Support</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Join our active community Discord server for instant troubleshooting, script suggestions, and regular developer updates.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script Hub Preview Section -->
+    <section id="scripthub" class="py-20 relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                <!-- Left info -->
+                <div class="lg:col-span-5 p-8 sm:p-12 flex flex-col justify-center">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neon-cyan/10 text-neon-cyan text-xs font-semibold mb-6 w-max">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span>Integrated Hub</span>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-white mb-4">Explore The Ultimate <span class="text-gradient">Script Library</span></h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        No need to scour Discord servers or sketchy websites for scripts. MediumRemaster features a curated, cloud-synced script hub updated daily with top-tier scripts.
+                    </p>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-300">
+                        <li class="flex items-center space-x-3">
+                            <i class="fa-solid fa-check text-neon-cyan"></i>
+                            <span>One-click script execution</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fa-solid fa-check text-neon-cyan"></i>
+                            <span>Favorites & custom script saving</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fa-solid fa-check text-neon-cyan"></i>
+                            <span>Built-in error debugger & console</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Right preview mock UI -->
+                <div class="lg:col-span-7 bg-dark-900/90 p-6 sm:p-8 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col justify-between">
+                    <!-- Fake Window Top Bar -->
+                    <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-xs text-gray-400 ml-2 font-mono">MediumRemaster v3.8.2 - Executor</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs text-gray-400">
+                            <span class="px-2 py-0.5 rounded bg-dark-700 text-neon-purple font-mono">Game: Blox Fruits</span>
+                        </div>
+                    </div>
+
+                    <!-- Code Editor simulation -->
+                    <div class="font-mono text-xs sm:text-sm bg-dark-950 p-4 rounded-xl border border-white/5 mb-6 text-gray-300 overflow-x-auto space-y-1">
+                        <div><span class="text-purple-400">local</span> <span class="text-cyan-300">Library</span> = <span class="text-yellow-300">loadstring</span>(<span class="text-green-300">game:HttpGet</span>(<span class="text-orange-300">"https://mediumremaster.net/loader.lua"</span>))()</div>
+                        <div><span class="text-purple-400">local</span> <span class="text-cyan-300">Window</span> = <span class="text-cyan-300">Library</span>:<span class="text-yellow-300">CreateWindow</span>({</div>
+                        <div class="pl-4">Name = <span class="text-green-300">"MediumRemaster | Hub"</span>,</div>
+                        <div class="pl-4">Theme = <span class="text-green-300">"DarkNeon"</span></div>
+                        <div>})</div>
+                        <div class="text-gray-600">-- Attached successfully. Ready for execution.</div>
+                    </div>
+
+                    <!-- Action buttons inside mock UI -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex space-x-2">
+                            <button onclick="showToast('Script Executed Successfully!', 'success')" class="px-4 py-2 rounded-lg bg-neon-purple hover:bg-neon-purple/80 text-white text-xs font-semibold transition-all">Execute Script</button>
+                            <button onclick="showToast('Editor Cleared', 'info')" class="px-4 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-300 text-xs font-semibold transition-all">Clear</button>
+                        </div>
+                        <span class="text-xs text-green-400 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-circle text-[8px]"></i>
+                            <span>Injected & Attached</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Guide Section -->
+    <section id="installation" class="py-20 relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Simple <span class="text-gradient">Installation Guide</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto">Get up and running with MediumRemaster in less than 2 minutes.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 relative">
+                <div class="absolute -top-4 -left-4 w-10 h-10 rounded-2xl bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center font-extrabold text-white shadow-lg">1</div>
+                <h3 class="text-xl font-bold text-white mb-3 mt-2">Download Package</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Click the download button below to get the latest stable installer package. Ensure any aggressive antivirus is temporarily disabled during download.
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 relative">
+                <div class="absolute -top-4 -left-4 w-10 h-10 rounded-2xl bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center font-extrabold text-white shadow-lg">2</div>
+                <h3 class="text-xl font-bold text-white mb-3 mt-2">Extract & Setup</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Extract the downloaded archive into a dedicated folder. Run <code class="text-neon-cyan font-mono text-xs px-1.5 py-0.5 bg-dark-700 rounded">MediumRemaster.exe</code> as Administrator.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5 relative">
+                <div class="absolute -top-4 -left-4 w-10 h-10 rounded-2xl bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center font-extrabold text-white shadow-lg">3</div>
+                <h3 class="text-xl font-bold text-white mb-3 mt-2">Attach & Play</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Launch Roblox, join any game, and click <span class="text-white font-semibold">"Attach"</span> inside the executor interface. Paste your script or choose one from the Hub!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="py-20 relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="glass-panel p-10 sm:p-16 rounded-3xl border border-neon-purple/30 glow-purple relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-neon-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-6">Ready to Elevate Your <span class="text-gradient">Gameplay?</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto mb-10 text-base sm:text-lg">
+                Join thousands of players worldwide enjoying smooth execution, secure updates, and maximum performance.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-5">
+                <button onclick="triggerDownload('installer')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-bold text-base shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-cloud-arrow-down text-lg"></i>
+                    <span>Download Installer (.exe)</span>
+                </button>
+                <button onclick="triggerDownload('zip')" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-white font-bold text-base hover:bg-dark-700/50 border border-white/20 transition-all duration-300 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-file-zipper text-neon-cyan"></i>
+                    <span>Download Portable (.zip)</span>
+                </button>
+            </div>
+
+            <div class="mt-8 flex items-center justify-center space-x-6 text-xs text-gray-400">
+                <span class="flex items-center space-x-1.5"><i class="fa-solid fa-shield-check text-green-400"></i><span>100% Virus-Free</span></span>
+                <span class="flex items-center space-x-1.5"><i class="fa-solid fa-bolt text-neon-cyan"></i><span>Instant Auto-Update</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Frequently Asked <span class="text-gradient">Questions</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto">Got questions? We've got answers.</p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="glass-panel rounded-2xl border border-white/5 overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white flex items-center justify-between hover:text-neon-cyan transition-colors">
+                    <span>Is MediumRemaster safe to use?</span>
+                    <i class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 pb-5 text-gray-400 text-sm hidden leading-relaxed">
+                    Yes! MediumRemaster is rigorously scanned and tested against malware. Our bypass mechanisms ensure your hardware and main account remain safe when using recommended practices.
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="glass-panel rounded-2xl border border-white/5 overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white flex items-center justify-between hover:text-neon-cyan transition-colors">
+                    <span>Do I need a key system?</span>
+                    <i class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 pb-5 text-gray-400 text-sm hidden leading-relaxed">
+                    We offer both a frictionless free tier with a quick key system and a premium tier with zero keys required for uninterrupted access.
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="glass-panel rounded-2xl border border-white/5 overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white flex items-center justify-between hover:text-neon-cyan transition-colors">
+                    <span>What should I do if it fails to attach?</span>
+                    <i class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 pb-5 text-gray-400 text-sm hidden leading-relaxed">
+                    Make sure your antivirus isn't blocking the DLL files, run the program as Administrator, and ensure Roblox is fully updated to the latest version.
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="glass-panel rounded-2xl border border-white/5 overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white flex items-center justify-between hover:text-neon-cyan transition-colors">
+                    <span>How often is it updated after Roblox patches?</span>
+                    <i class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 pb-5 text-gray-400 text-sm hidden leading-relaxed">
+                    Our dedicated developer team deploys automatic hotfixes usually within 1 to 3 hours following any major Roblox Hyperion client update.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-dark-900 py-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-neon-purple to-neon-cyan flex items-center justify-center">
+                    <i class="fa-solid fa-bolt text-white text-sm"></i>
+                </div>
+                <span class="text-base font-extrabold text-white tracking-wider">MEDIUM<span class="text-gradient">REMASTER</span></span>
+            </div>
+
+            <div class="text-xs text-gray-500 text-center md:text-left">
+                &copy; 2026 MediumRemaster Executor. All rights reserved. Not affiliated with Roblox Corporation.
+            </div>
+
+            <div class="flex items-center space-x-4 text-gray-400">
+                <a href="#" class="hover:text-neon-cyan transition-colors"><i class="fa-brands fa-discord text-xl"></i></a>
+                <a href="#" class="hover:text-neon-cyan transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="#" class="hover:text-neon-cyan transition-colors"><i class="fa-brands fa-telegram text-xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactive Handlers -->
+    <script>
+        // Custom Toast Notification Function (replaces alert)
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.textContent = message;
+            if(type === 'success') {
+                toastTitle.textContent = 'Success';
+                toastIcon.className = 'fa-solid fa-circle-check text-neon-cyan text-xl';
+            } else {
+                toastTitle.textContent = 'Info';
+                toastIcon.className = 'fa-solid fa-circle-info text-neon-purple text-xl';
+            }
+
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 3500);
+        }
+
+        // Trigger Download Simulation
+        function triggerDownload(type) {
+            const fileName = type === 'installer' ? 'MediumRemaster_Installer_v3.8.2.exe' : 'MediumRemaster_Portable_v3.8.2.zip';
+            showToast(`Initializing download for ${fileName}...`, 'success');
+            
+            // Simulating download link trigger
+            setTimeout(() => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent('MediumRemaster Executor Mock Binary Data'));
+                element.setAttribute('download', fileName);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }, 1000);
+        }
+
+        // FAQ Toggle Accordion
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('fa-chevron-down');
+            
+            // Toggle open state
+            const isOpen = !content.classList.contains('hidden');
+            
+            // Close all
+            document.querySelectorAll('#faq .glass-panel div:last-child').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('#faq button i').forEach(i => {
+                i.style.transform = 'rotate(0deg)';
+            });
+
+            if(isOpen) {
+                content.classList.add('hidden');
+            } else {
+                content.classList.remove('hidden');
+                button.querySelector('i').style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body>
+</html>
